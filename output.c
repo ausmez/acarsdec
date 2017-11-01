@@ -68,8 +68,8 @@ int initOutput(char *logfilename, char *Rawaddr)
 
 	for (p = servinfo; p != NULL; p = p->ai_next) {
 		if ((sockfd =
-		     socket(p->ai_family, p->ai_socktype,
-			    p->ai_protocol)) == -1) {
+			 socket(p->ai_family, p->ai_socktype,
+				p->ai_protocol)) == -1) {
 			continue;
 		}
 
@@ -148,6 +148,23 @@ void outsv(acarsmsg_t * msg, int chn, time_t tm)
 	write(sockfd, pkt, strlen(pkt));
 }
 
+void outab(acarsmsg_t * msg, int chn, time_t tm)
+{
+	char pkt[500];
+	struct tm *tmp;
+
+	tmp = gmtime(&tm);
+
+	sprintf(pkt,
+		"%s\t%3.3f\t%02d/%02d/%04d\t%02d:%02d:%02d\t%1c\t%7s\t%1c\t%2s\t%1c\t%4s\t%6s\t%s",
+		idstation, channel[chn].Fr / 1000000, tmp->tm_mday, tmp->tm_mon + 1,
+		tmp->tm_year + 1900, tmp->tm_hour, tmp->tm_min, tmp->tm_sec,
+		msg->mode, msg->addr, msg->ack, msg->label,
+		msg->bid, msg->no, msg->fid, msg->txt);
+
+	write(sockfd, pkt, strlen(pkt));
+}
+
 static void printmsg(acarsmsg_t * msg, int chn, time_t t)
 {
 	oooi_t oooi;
@@ -184,12 +201,12 @@ static void printmsg(acarsmsg_t * msg, int chn, time_t t)
 	if(DecodeLabel(msg,&oooi)) {
 		fprintf(fdout, "##########################\n");
 		if(oooi.da[0]) fprintf(fdout,"Destination Airport : %s\n",oooi.da);
-        	if(oooi.sa[0]) fprintf(fdout,"Departure Airport : %s\n",oooi.sa);
-        	if(oooi.eta[0]) fprintf(fdout,"Estimation Time of Arrival : %s\n",oooi.eta);
-        	if(oooi.gout[0]) fprintf(fdout,"Gate out Time : %s\n",oooi.gout);
-        	if(oooi.gin[0]) fprintf(fdout,"Gate in Time : %s\n",oooi.gin);
-        	if(oooi.woff[0]) fprintf(fdout,"Wheels off Tme : %s\n",oooi.woff);
-        	if(oooi.won[0]) fprintf(fdout,"Wheels on Time : %s\n",oooi.won);
+			if(oooi.sa[0]) fprintf(fdout,"Departure Airport : %s\n",oooi.sa);
+			if(oooi.eta[0]) fprintf(fdout,"Estimation Time of Arrival : %s\n",oooi.eta);
+			if(oooi.gout[0]) fprintf(fdout,"Gate out Time : %s\n",oooi.gout);
+			if(oooi.gin[0]) fprintf(fdout,"Gate in Time : %s\n",oooi.gin);
+			if(oooi.woff[0]) fprintf(fdout,"Wheels off Tme : %s\n",oooi.woff);
+			if(oooi.won[0]) fprintf(fdout,"Wheels on Time : %s\n",oooi.won);
 	}
 
 	fflush(fdout);
@@ -310,13 +327,13 @@ static void printjson(acarsmsg_t * msg, int chn, time_t t)
 		fprintf(fdout, ",\"end\":true");
 
 	if(DecodeLabel(msg,&oooi)) {
-        	if(oooi.sa[0]) { fprintf(fdout,",\"depa\":");PRINTS(oooi.sa);}
+			if(oooi.sa[0]) { fprintf(fdout,",\"depa\":");PRINTS(oooi.sa);}
 		if(oooi.da[0]) { fprintf(fdout,",\"dsta\":"); PRINTS(oooi.da); }
-        	if(oooi.eta[0]) { fprintf(fdout,",\"eta\":");PRINTS(oooi.eta);}
-        	if(oooi.gout[0]) { fprintf(fdout,",\"gtout\":");PRINTS(oooi.gout);}
-        	if(oooi.gin[0]) { fprintf(fdout,",\"gtin\":");PRINTS(oooi.gin);}
-        	if(oooi.woff[0]) { fprintf(fdout,",\"wloff\":");PRINTS(oooi.woff);}
-        	if(oooi.won[0]) { fprintf(fdout,",\"wlin\":");PRINTS(oooi.won);}
+			if(oooi.eta[0]) { fprintf(fdout,",\"eta\":");PRINTS(oooi.eta);}
+			if(oooi.gout[0]) { fprintf(fdout,",\"gtout\":");PRINTS(oooi.gout);}
+			if(oooi.gin[0]) { fprintf(fdout,",\"gtin\":");PRINTS(oooi.gin);}
+			if(oooi.woff[0]) { fprintf(fdout,",\"wloff\":");PRINTS(oooi.woff);}
+			if(oooi.won[0]) { fprintf(fdout,",\"wlin\":");PRINTS(oooi.won);}
 	}
 
 	fprintf(fdout,"}\n");
@@ -388,12 +405,12 @@ static void addFlight(acarsmsg_t * msg, int chn, time_t t)
 
 	if(DecodeLabel(msg,&oooi)) {
 		if(oooi.da[0]) memcpy(fl->oooi.da,oooi.da,5);
-        	if(oooi.sa[0]) memcpy(fl->oooi.sa,oooi.sa,5);
-        	if(oooi.eta[0]) memcpy(fl->oooi.eta,oooi.eta,5);
-        	if(oooi.gout[0]) memcpy(fl->oooi.gout,oooi.gout,5);
-        	if(oooi.gin[0]) memcpy(fl->oooi.gin,oooi.gin,5);
-        	if(oooi.woff[0]) memcpy(fl->oooi.woff,oooi.woff,5);
-        	if(oooi.won[0]) memcpy(fl->oooi.won,oooi.won,5);
+			if(oooi.sa[0]) memcpy(fl->oooi.sa,oooi.sa,5);
+			if(oooi.eta[0]) memcpy(fl->oooi.eta,oooi.eta,5);
+			if(oooi.gout[0]) memcpy(fl->oooi.gout,oooi.gout,5);
+			if(oooi.gin[0]) memcpy(fl->oooi.gin,oooi.gin,5);
+			if(oooi.woff[0]) memcpy(fl->oooi.woff,oooi.woff,5);
+			if(oooi.won[0]) memcpy(fl->oooi.won,oooi.won,5);
 	}
 
 	if(flp) {
@@ -444,8 +461,8 @@ static void printmonitor(acarsmsg_t * msg, int chn, time_t t)
 		for(i=0;i<nbch;i++) printf("%c",(fl->chm&(1<<i))?'x':'.');
 		for(;i<MAXNBCHANNELS;i++) printf(" ");
 		printf(" ");printtime(fl->ts);
-        	if(fl->oooi.eta[0]) printf("  %4s ",fl->oooi.eta); else printf("      ");
-        	if(fl->oooi.sa[0]) printf("  %4s ",fl->oooi.sa); else printf("      ");
+			if(fl->oooi.eta[0]) printf("  %4s ",fl->oooi.eta); else printf("      ");
+			if(fl->oooi.sa[0]) printf("  %4s ",fl->oooi.sa); else printf("      ");
 		if(fl->oooi.da[0]) printf("  %4s ",fl->oooi.da); else printf("      ");
 		printf("\n");
 
@@ -525,10 +542,13 @@ void outputmsg(const msgblk_t * blk)
 	msg.be = blk->txt[blk->len - 1];
 
 	if (sockfd > 0) {
-		if (netout == 0)
+		if (netout == 0) {
 			outpp(&msg);
-		else
+		} else if (netout == 1) {
 			outsv(&msg, blk->chn, blk->tm);
+		} else {
+			outab(&msg, blk->chn, blk->tm);
+		}
 	}
 
 	switch (outtype) {

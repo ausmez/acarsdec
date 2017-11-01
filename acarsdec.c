@@ -67,39 +67,41 @@ static void usage(void)
 	fprintf(stderr, "\n\n");
 	fprintf(stderr, " -v\t\t\t: verbose\n");
 	fprintf(stderr,
-		" -A\t\t\t: don't display uplink messages (ie : only aircraft messages)\n");
+		" -A\t\t\t: Don't display uplink messages (ie : only aircraft messages)\n");
 	fprintf(stderr,
-		"\n -o lv\t\t\t: output format : 0: no log, 1 one line by msg., 2 full (default) , 3 monitor mode, 4 newline separated JSON\n");
+		"\n -o lv\t\t\t: Output format : 0: no log, 1 one line by msg., 2 full (default) , 3 monitor mode, 4 newline separated JSON\n");
 	fprintf(stderr,
-		"\n -t time\t\t\t: set forget time (TTL) in seconds for monitor mode (default=600s)\n");
+		"\n -t time\t\t\t: Set forget time (TTL) in seconds for monitor mode (default=600s)\n");
 	fprintf(stderr,
 		" -l logfile\t\t: Append log messages to logfile (Default : stdout).\n");
 	fprintf(stderr,
-		" -n ipaddr:port\t\t: send acars messages to addr:port on UDP in planeplotter compatible format\n");
+		" -n ipaddr:port\t\t: Send acars messages to addr:port on UDP in planeplotter compatible format\n");
 	fprintf(stderr,
-		" -N ipaddr:port\t\t: send acars messages to addr:port on UDP in acarsdev native format\n");
+		" -N ipaddr:port\t\t: Send acars messages to addr:port on UDP in acarsdev native format\n");
 	fprintf(stderr,
-		" -i stationid\t\t: station id used in acarsdec network format.\n\n");
+		" -b ipaddr:port\t\t: Send acars messages to addr:port on UDP in tab delimited format\n");
+	fprintf(stderr,
+		" -i stationid\t\t: Station ID used in acarsdec network format.\n\n");
 #ifdef WITH_ALSA
 	fprintf(stderr,
-		" -a alsapcmdevice\t: decode from soundcard input alsapcmdevice (ie: hw:0,0)\n");
+		" -a alsapcmdevice\t: Decode from soundcard input alsapcmdevice (ie: hw:0,0)\n");
 #endif
 #ifdef WITH_SNDFILE
 	fprintf(stderr,
-		" -f inputwavfile\t: decode from a wav file at %d sampling rate\n",INTRATE);
+		" -f inputwavfile\t: Decode from a wav file at %d sampling rate\n",INTRATE);
 #endif
 #ifdef WITH_RTL
 	fprintf(stderr,
-		" -g gain\t\t: set rtl preamp gain in tenth of db (ie -g 90 for +9db). By default use AGC\n");
+		" -g gain\t\t: Set rtl preamp gain in tenth of db (ie -g 90 for +9db). By default use AGC\n");
 	fprintf(stderr, " -p ppm\t\t\t: set rtl ppm frequency correction\n");
 	fprintf(stderr,
 		" -r rtldevice f1 [f2]...[f%d]\t: decode from rtl dongle number or S/N rtldevice receiving at VHF frequencies f1 and optionally f2 to f%d in Mhz (ie : -r 0 131.525 131.725 131.825 )\n", MAXNBCHANNELS, MAXNBCHANNELS);
 #endif
 	fprintf(stderr,
-		" -R \t: decode from stdin at %d sampling rate, 1 channel, native float32\n",INTRATE);
+		" -R \t: Decode from stdin at %d sampling rate, 1 channel, native float32\n",INTRATE);
 #ifdef WITH_AIR
 	fprintf(stderr,
-		" -s f1 [f2]...[f%d]\t: decode from airspy receiving at VHF frequencies f1 and optionally f2 to f%d in Mhz (ie : -r 0 131.525 131.725 131.825 )\n", MAXNBCHANNELS, MAXNBCHANNELS);
+		" -s f1 [f2]...[f%d]\t: Decode from airspy receiving at VHF frequencies f1 and optionally f2 to f%d in Mhz (ie : -r 0 131.525 131.725 131.825 )\n", MAXNBCHANNELS, MAXNBCHANNELS);
 #endif
 	fprintf(stderr,
 		"\nFor any input source, up to %d channels may be simultaneously decoded\n", MAXNBCHANNELS);
@@ -150,7 +152,7 @@ int main(int argc, char **argv)
 		case 'p':
 			ppm = atoi(optarg);
 			break;
-    case 'g':
+	case 'g':
 			gain = atoi(optarg);
 			break;
 #endif
@@ -171,6 +173,10 @@ int main(int argc, char **argv)
 		case 'N':
 			Rawaddr = optarg;
 			netout = 1;
+			break;
+		case 'b':
+			Rawaddr = optarg;
+			netout = 2;
 			break;
 		case 'A':
 			airflt = 1;
