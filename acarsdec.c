@@ -71,7 +71,7 @@ static void usage(void)
 	fprintf(stderr,
 		"\n -o lv\t\t\t: Output format : 0: no log, 1 one line by msg., 2 full (default) , 3 monitor mode, 4 newline separated JSON\n");
 	fprintf(stderr,
-		"\n -t time\t\t\t: Set forget time (TTL) in seconds for monitor mode (default=600s)\n");
+		"\n -t time\t\t: Set forget time (TTL) in seconds for monitor mode (default=600s)\n");
 	fprintf(stderr,
 		" -l logfile\t\t: Append log messages to logfile (Default : stdout).\n");
 	fprintf(stderr,
@@ -120,7 +120,7 @@ int main(int argc, char **argv)
 	int res, n;
 	struct sigaction sigact;
 
-	while ((c = getopt(argc, argv, "vafrsRo:t:g:Ap:n:N:l:c:i:f:")) != EOF) {
+	while ((c = getopt(argc, argv, "vafrsRo:t:g:Ap:n:N:b:l:c:i:f:")) != EOF) {
 
 		switch (c) {
 		case 'v':
